@@ -7,19 +7,41 @@
 //
 
 import UIKit
+import CoreLocation
 
-class ViewController: UIViewController {
-
+class ViewController: UIViewController, CLLocationManagerDelegate {
+    
+    @IBOutlet private weak var latitudeLabel: UILabel!
+    @IBOutlet private weak var longitudeLabel: UILabel!
+    
+    private let locationManager = CLLocationManager()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+        latitudeLabel.text = " - "
+        longitudeLabel.text = " - "
+        setUpLocationManager()
     }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+    
+    private func setUpLocationManager() {
+        locationManager.delegate = self
+        locationManager.requestAlwaysAuthorization()
+        locationManager.desiredAccuracy = kCLLocationAccuracyBest
+        locationManager.distanceFilter = kCLDistanceFilterNone
+        
+        locationManager.startUpdatingLocation()
     }
-
-
+    
+    func locationManager(manager: CLLocationManager, didUpdateToLocation newLocation: CLLocation, fromLocation oldLocation: CLLocation) {
+        latitudeLabel.text = "\(newLocation.coordinate.latitude)"
+        longitudeLabel.text = "\(newLocation.coordinate.longitude)"
+    }
+    
+    func locationManager(manager: CLLocationManager, didFailWithError error: NSError) {
+        latitudeLabel.text = " - "
+        longitudeLabel.text = " - "
+        print(error)
+    }
+    
 }
 
